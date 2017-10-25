@@ -1081,11 +1081,9 @@ class MWSClient{
 
     public function ListOrdersAll($from_time)
     {
+        
         $query = [
             'CreatedAfter' => gmdate(self::DATE_FORMAT, $from_time),
-            'FulfillmentChannel.Channel.1' => 'MFN',
-            'FulfillmentChannel.Channel.2' => 'AFN',
-            'OrderStatus.Status.1' => 'All',
         ];
 
         $response = $this->request(
@@ -1094,14 +1092,53 @@ class MWSClient{
         );
 
         if (isset($response['ListOrdersResult']['Orders']['Order'])) {
-            $response = $response['ListOrdersResult']['Orders']['Order'];
-            if (array_keys($response) !== range(0, count($response) - 1)) {
-                return [$response];
+            $orders = $response['ListOrdersResult']['Orders']['Order'];
+            if (array_keys($orders) !== range(0, count($orders) - 1)) {
+                $orders = [$orders];
             }
-            return $response;
         } else {
-            return [];
+            $orders = [];
         }
+
+        if (isset($response['ListOrdersResult']['NextToken'])) {
+            $NextToken = $response['ListOrdersResult']['NextToken'];
+        } else {
+            $NextToken = null;
+        }
+
+        return ['orders' => $orders, 'NextToken' => $NextToken];
+
+    }
+
+    public function ListOrdersByNextToken($NextToken)
+    {
+
+        $query = [
+            'NextToken' => $NextToken,
+        ];
+
+        $response = $this->request(
+            'ListOrdersByNextToken',
+            $query
+        );
+
+        if (isset($response['ListOrdersResult']['Orders']['Order'])) {
+            $orders = $response['ListOrdersResult']['Orders']['Order'];
+            if (array_keys($orders) !== range(0, count($orders) - 1)) {
+                $orders = [$orders];
+            }
+        } else {
+            $orders = [];
+        }
+
+        if (isset($response['ListOrdersResult']['NextToken'])) {
+            $NextToken = $response['ListOrdersResult']['NextToken'];
+        } else {
+            $NextToken = null;
+        }
+
+        return ['orders' => $orders, 'NextToken' => $NextToken];
+
     }
 
 }
