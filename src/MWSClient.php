@@ -1083,7 +1083,9 @@ class MWSClient{
     {
         $query = [
             'CreatedAfter' => gmdate(self::DATE_FORMAT, $from_time),
-            'MaxResultsPerPage.1' => 5
+            'FulfillmentChannel.Channel.1' => 'MFN',
+            'FulfillmentChannel.Channel.2' => 'AFN',
+            'OrderStatus.Status.1' => 'All',
         ];
 
         $response = $this->request(
@@ -1101,5 +1103,5 @@ class MWSClient{
             return [];
         }
     }
-    
+
 }
