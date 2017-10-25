@@ -1078,4 +1078,28 @@ class MWSClient{
             throw new Exception($message);
         }
     }
+
+    public function ListOrdersAll($from_time)
+    {
+        $query = [
+            'CreatedAfter' => gmdate(self::DATE_FORMAT, $from_time),
+            'MaxResultsPerPage.1' => 5
+        ];
+
+        $response = $this->request(
+            'ListOrders',
+            $query
+        );
+
+        if (isset($response['ListOrdersResult']['Orders']['Order'])) {
+            $response = $response['ListOrdersResult']['Orders']['Order'];
+            if (array_keys($response) !== range(0, count($response) - 1)) {
+                return [$response];
+            }
+            return $response;
+        } else {
+            return [];
+        }
+    }
+    
 }
