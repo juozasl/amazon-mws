@@ -1,5 +1,6 @@
 vendor/
 test.php
+.DS_Store
 xml.xml
 xsd/
 documentor.php
