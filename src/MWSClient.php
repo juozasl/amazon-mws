@@ -1141,4 +1141,59 @@ class MWSClient{
 
     }
 
+    public function ListOrderItemsAll($AmazonOrderId)
+    {
+
+        $items = [];
+
+        $response = $this->request('ListOrderItems', [
+            'AmazonOrderId' => $AmazonOrderId
+        ]);
+
+        $result = array_values($response['ListOrderItemsResult']['OrderItems']);
+
+        if (isset($result[0]['QuantityOrdered'])) {
+            $items = $result;
+        } else {
+            $items = $result[0];
+        }
+
+        if (isset($response['ListOrderItemsResult']['NextToken'])) {
+            $NextToken = $response['ListOrderItemsResult']['NextToken'];
+        } else {
+            $NextToken = null;
+        }
+
+        return ['items' => $items, 'NextToken' => $NextToken];
+
+
+    }
+
+    public function ListOrderItemsByNextToken($NextToken)
+    {
+        
+        $items = [];
+
+        $response = $this->request('ListOrderItemsByNextToken', [
+            'NextToken' => $NextToken
+        ]);
+
+        $result = array_values($response['ListOrderItemsByNextTokenResult']['OrderItems']);
+
+        if (isset($result[0]['QuantityOrdered'])) {
+            $items = $result;
+        } else {
+            $items = $result[0];
+        }
+
+        if (isset($response['ListOrderItemsByNextTokenResult']['NextToken'])) {
+            $NextToken = $response['ListOrderItemsByNextTokenResult']['NextToken'];
+        } else {
+            $NextToken = null;
+        }
+
+        return ['items' => $items, 'NextToken' => $NextToken];
+
+    }
+
 }
