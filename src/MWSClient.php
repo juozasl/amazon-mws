@@ -1196,4 +1196,35 @@ class MWSClient{
 
     }
 
+    public function RequestReporTimestamp($report, $StartTime = null, $EndTime = null)
+    {
+        $query = [
+            'MarketplaceIdList.Id.1' => $this->config['Marketplace_Id'],
+            'ReportType' => $report
+        ];
+
+        if (!is_null($StartTime)) {
+            
+            $query['StartDate'] = gmdate(self::DATE_FORMAT, $StartTime);
+            
+        }
+
+        if (!is_null($EndTime)) {
+          
+            $query['EndDate'] = gmdate(self::DATE_FORMAT, $EndTime);
+          
+        }
+
+        $result = $this->request(
+            'RequestReport',
+            $query
+        );
+
+        if (isset($result['RequestReportResult']['ReportRequestInfo']['ReportRequestId'])) {
+            return $result['RequestReportResult']['ReportRequestInfo']['ReportRequestId'];
+        } else {
+            throw new Exception('Error trying to request report');
+        }
+    }
+
 }
