@@ -1223,7 +1223,7 @@ class MWSClient{
         if (isset($result['RequestReportResult']['ReportRequestInfo']['ReportRequestId'])) {
             return $result['RequestReportResult']['ReportRequestInfo']['ReportRequestId'];
         } else {
-            throw new Exception('Error trying to request report');
+            return false;
         }
     }
 
