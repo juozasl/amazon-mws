@@ -620,6 +620,9 @@ class MWSClient{
     public function GetReportList($ReportTypeList = [])
     {
         $array = [];
+        
+        $array['MaxCount'] = 100;
+
         $counter = 1;
         if (count($ReportTypeList)) {
             foreach($ReportTypeList as $ReportType) {
@@ -1226,6 +1229,20 @@ class MWSClient{
         } else {
             return false;
         }
+    }
+
+    public function GetReportScheduleList($ReportTypeList = [])
+    {
+        $array = [];
+        $counter = 1;
+        if (count($ReportTypeList)) {
+            foreach($ReportTypeList as $ReportType) {
+                $array['ReportTypeList.Type.' . $counter] = $ReportType;
+                $counter++;
+            }
+        }
+
+        return $this->request('GetReportScheduleList', $array);
     }
 
 }

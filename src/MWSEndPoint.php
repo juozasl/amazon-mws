@@ -54,6 +54,12 @@ class MWSEndPoint{
             'path' => '/',
             'date' => '2009-01-01'
         ],
+        'GetReportScheduleList' => [
+            'method' => 'POST',
+            'action' => 'GetReportScheduleList',
+            'path' => '/',
+            'date' => '2009-01-01'
+        ],
         'GetReportRequestList' => [
             'method' => 'POST',
             'action' => 'GetReportRequestList',
