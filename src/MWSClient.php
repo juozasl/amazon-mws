@@ -1087,7 +1087,7 @@ class MWSClient{
     {
         
         $query = [
-            'CreatedAfter' => gmdate(self::DATE_FORMAT, $from_time),
+            'LastUpdatedAfter' => gmdate(self::DATE_FORMAT, $from_time),
         ];
 
         $response = $this->request(
