@@ -1245,4 +1245,66 @@ class MWSClient{
         return $this->request('GetReportScheduleList', $array);
     }
 
+    public function ListFinancialEvents($from_time)
+    {
+
+        $events = [];
+
+        $response = $this->request('ListFinancialEvents', [
+            'PostedAfter' => gmdate(self::DATE_FORMAT, $from_time)
+        ]);
+
+
+        if (isset($response['ListFinancialEventsResult']['FinancialEvents'])) {
+            $events = $response['ListFinancialEventsResult']['FinancialEvents'];
+        } else {
+            $events = [];
+        }
+
+        if (isset($response['ListFinancialEventsResult']['NextToken'])) {
+
+            $NextToken = $response['ListFinancialEventsResult']['NextToken'];
+
+        } else {
+
+            $NextToken = null;
+
+        }
+
+        return ['events' => $events, 'NextToken' => $NextToken];
+
+
+    }
+
+    public function ListFinancialEventsByNextToken($NextToken)
+    {
+
+        $events = [];
+
+        $response = $this->request('ListFinancialEventsByNextToken', [
+            'NextToken' => $NextToken
+        ]);
+
+
+        if (isset($response['ListFinancialEventsByNextTokenResult']['FinancialEvents'])) {
+            $events = $response['ListFinancialEventsByNextTokenResult']['FinancialEvents'];
+        } else {
+            $events = [];
+        }
+
+        if (isset($response['ListFinancialEventsByNextTokenResult']['NextToken'])) {
+            
+            $NextToken = $response['ListFinancialEventsByNextTokenResult']['NextToken'];
+
+        } else {
+
+            $NextToken = null;
+
+        }
+
+        return ['events' => $events, 'NextToken' => $NextToken];
+
+
+    }
+
 }
