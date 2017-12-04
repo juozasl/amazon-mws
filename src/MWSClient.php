@@ -44,6 +44,7 @@ class MWSClient{
     ];
 
     protected $debugNextFeed = false;
+    protected $client = NULL;
 
     public function __construct(array $config)
     {
@@ -714,6 +715,34 @@ class MWSClient{
         return $this->SubmitFeed('_POST_INVENTORY_AVAILABILITY_DATA_', $feed);
 
     }
+    
+    /**
+     * Update a product's stock quantity
+     *
+     * @param array $array array containing arrays with next keys: [sku, quantity, latency]
+     * @return array feed submission result
+     */
+     public function updateStockWithFulfillmentLatency(array $array)
+     {
+         $feed = [
+             'MessageType' => 'Inventory',
+             'Message' => []
+         ];
+ 
+         foreach ($array as $item) {
+             $feed['Message'][] = [
+                 'MessageID' => rand(),
+                 'OperationType' => 'Update',
+                 'Inventory' => [
+                     'SKU' => $item['sku'],
+                     'Quantity' => (int) $item['quantity'],
+                     'FulfillmentLatency' => $item['latency']
+                 ]
+             ];
+         }
+ 
+          return $this->SubmitFeed('_POST_INVENTORY_AVAILABILITY_DATA_', $feed);
+    }
 
     /**
      * Update a product's price
@@ -1062,9 +1091,11 @@ class MWSClient{
 
             $requestOptions['query'] = $query;
 
-            $client = new Client();
+            if($this->client === NULL) {
+               $this->client = new Client();
+            }
 
-            $response = $client->request(
+            $response = $this->client->request(
                 $endPoint['method'],
                 $this->config['Region_Url'] . $endPoint['path'],
                 $requestOptions
@@ -1096,6 +1127,12 @@ class MWSClient{
             }
             throw new Exception($message);
         }
+    }
+
+    public function setClient(Client $client) {
+
+           $this->client = $client;
+
     }
 
     public function ListOrdersAll($from_time)
