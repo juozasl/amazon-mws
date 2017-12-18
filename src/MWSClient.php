@@ -146,6 +146,46 @@ class MWSClient{
     }
 
     /**
+     * Returns the current competitive price of a product, based on SKU.
+     * @param array [$sku_array = []]
+     * @return array
+     */
+    public function GetCompetitivePricingForSKU($sku_array = [])
+    {
+        if (count($sku_array) > 20) {
+            throw new Exception('Maximum amount of SKU\'s for this call is 20');
+        }
+        $counter = 1;
+        $query = [
+            'MarketplaceId' => $this->config['Marketplace_Id']
+        ];
+        foreach($sku_array as $key){
+            $query['SellerSKUList.SellerSKU.' . $counter] = $key;
+            $counter++;
+        }
+        $response = $this->request(
+            'GetCompetitivePricingForSKU',
+            $query
+        );
+        if (isset($response['GetCompetitivePricingForSKUResult'])) {
+            $response = $response['GetCompetitivePricingForSKUResult'];
+            if (array_keys($response) !== range(0, count($response) - 1)) {
+                $response = [$response];
+            }
+        } else {
+            return [];
+        }
+        $array = [];
+        foreach ($response as $product) {
+            if (isset($product['Product']['CompetitivePricing']['CompetitivePrices']['CompetitivePrice']['Price'])) {
+                $array[$product['Product']['Identifiers']['SKUIdentifier']['SellerSKU']]['Price'] = $product['Product']['CompetitivePricing']['CompetitivePrices']['CompetitivePrice']['Price'];
+                $array[$product['Product']['Identifiers']['SKUIdentifier']['SellerSKU']]['Rank'] = $product['Product']['SalesRankings']['SalesRank'][1];
+            }
+        }
+        return $array;
+    }
+
+    /**
      * Returns lowest priced offers for a single product, based on ASIN.
      * @param string $asin
      * @param string [$ItemCondition = 'New'] Should be one in: New, Used, Collectible, Refurbished, Club
@@ -1010,6 +1050,45 @@ class MWSClient{
 
         return false;
 
+    }
+
+    /**
+	 * Get a list's inventory for Amazon's fulfillment
+	 *
+	 * @param array $sku_array
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+    public function ListInventorySupply($sku_array = []){
+	
+	    if (count($sku_array) > 50) {
+		    throw new Exception('Maximum amount of SKU\'s for this call is 50');
+	    }
+	
+	    $counter = 1;
+	    $query = [
+		    'MarketplaceId' => $this->config['Marketplace_Id']
+	    ];
+	
+	    foreach($sku_array as $key){
+		    $query['SellerSkus.member.' . $counter] = $key;
+		    $counter++;
+	    }
+	
+	    $response = $this->request(
+		    'ListInventorySupply',
+		    $query
+	    );
+	
+	    $result = [];
+	    if (isset($response['ListInventorySupplyResult']['InventorySupplyList']['member'])) {
+		    foreach ($response['ListInventorySupplyResult']['InventorySupplyList']['member'] as $ListInventorySupplyResult) {
+			    $result[] = $ListInventorySupplyResult;
+		    }
+	    }
+	    
+	    return $result;
     }
 
     /**

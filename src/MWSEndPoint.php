@@ -42,6 +42,12 @@ class MWSEndPoint{
             'path' => '/Products/2011-10-01',
             'date' => '2011-10-01'
         ],
+        'GetCompetitivePricingForSKU' => [
+            'method' => 'POST',
+            'action' => 'GetCompetitivePricingForSKU',
+            'path' => '/Products/2011-10-01',
+            'date' => '2011-10-01'
+        ],
         'GetFeedSubmissionResult' => [
             'method' => 'POST',
             'action' => 'GetFeedSubmissionResult',
@@ -77,6 +83,12 @@ class MWSEndPoint{
             'action' => 'RequestReport',
             'path' => '/',
             'date' => '2009-01-01'
+        ],
+        'ListInventorySupply' => [
+            'method' => 'POST',
+            'action' => 'ListInventorySupply',
+            'path' => '/FulfillmentInventory',
+            'date' => '2010-10-01'
         ],
         'ListOrders' => [
             'method' => 'POST',
