@@ -200,10 +200,7 @@ class MWSClient{
             'ItemCondition' => $ItemCondition
         ];
 
-        return $this->request(
-            'GetLowestPricedOffersForASIN',
-            $query
-        );
+        return $this->request( 'GetLowestPricedOffersForASIN', $query );
 
     }
 
@@ -598,7 +595,11 @@ class MWSClient{
                             $array['large_image'] = str_replace('._SL75_', '', $image);;
                         }
                         if (isset($product['Relationships']['VariationParent']['Identifiers']['MarketplaceASIN']['ASIN'])) {
+                            $array['Parentage'] = 'child';
                             $array['Relationships'] = $product['Relationships']['VariationParent']['Identifiers']['MarketplaceASIN']['ASIN'];
+                        }
+                        if (isset($product['Relationships']['VariationChild'])) {
+                            $array['Parentage'] = 'parent';
                         }
                         if (isset($product['SalesRankings']['SalesRank'])) {
                             $array['SalesRank'] = $product['SalesRankings']['SalesRank'];
@@ -1083,8 +1084,8 @@ class MWSClient{
 	
 	    $result = [];
 	    if (isset($response['ListInventorySupplyResult']['InventorySupplyList']['member'])) {
-		    foreach ($response['ListInventorySupplyResult']['InventorySupplyList']['member'] as $ListInventorySupplyResult) {
-			    $result[] = $ListInventorySupplyResult;
+		    foreach ($response['ListInventorySupplyResult']['InventorySupplyList']['member'] as $index => $ListInventorySupplyResult) {
+                $result[$index] = $ListInventorySupplyResult;
 		    }
 	    }
 	    
