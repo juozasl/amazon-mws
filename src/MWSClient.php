@@ -1017,6 +1017,8 @@ class MWSClient{
 
         if ($status !== false && $status['ReportProcessingStatus'] === '_DONE_NO_DATA_') {
             return [];
+        } else if ($status !== false && $status['ReportProcessingStatus'] === '_CANCELLED_') {
+            return 'cancelled';
         } else if ($status !== false && $status['ReportProcessingStatus'] === '_DONE_') {
 
             $result = $this->request('GetReport', [
