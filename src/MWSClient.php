@@ -1026,12 +1026,22 @@ class MWSClient{
             ]);
 
             if (is_string($result)) {
+
                 $csv = Reader::createFromString($result);
                 $csv->setDelimiter("\t");
+                
                 $headers = $csv->fetchOne();
+                $colscount = count($headers);
+
                 $result = [];
+
                 foreach ($csv->setOffset(1)->fetchAll() as $row) {
-                    $result[] = array_combine($headers, $row);
+                    
+                    if ($colscount == count($row))
+                    {
+                        $result[] = array_combine($headers, $row);
+                    }
+
                 }
             }
 
